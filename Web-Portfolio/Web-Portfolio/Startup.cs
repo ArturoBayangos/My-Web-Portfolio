@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using Web_Portfolio.Services;
+using static Web_Portfolio.DatabaseSettings;
 
 namespace Web_Portfolio
 {
@@ -28,6 +31,17 @@ namespace Web_Portfolio
             {
                 configuration.RootPath = "Front-End/build";
             });
+
+            //Map database credentials
+            services.Configure<DatabaseSetting>(
+                Configuration.GetSection(nameof(DatabaseSetting)));
+
+            services.AddSingleton<IDatabaseSetting>(sp =>
+                sp.GetRequiredService<IOptions<DatabaseSetting>>().Value);
+
+            services.AddSingleton<BlogsService>();
+            services.AddSingleton<ProjectsService>();
+            services.AddSingleton<AuthService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
